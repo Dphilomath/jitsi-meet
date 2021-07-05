@@ -1,0 +1,1 @@
+export { default as UploadPresentationButton } from './native/UploadPresentationButton';
