@@ -7,7 +7,9 @@ import { IconPPT } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { getLocalParticipant } from '../../../base/participants';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
+import { toggleSharedPresentation } from '../../actions.native';
 import { getFeatureFlag, UPLOAD_PPT_ENABLED } from '../../../base/flags';
+
 
 
 /**
@@ -19,6 +21,12 @@ import { getFeatureFlag, UPLOAD_PPT_ENABLED } from '../../../base/flags';
      * Whether or not the button is disabled.
      */
     _isDisabled: boolean,
+
+
+    /**
+     * Whether or not the local participant is sharing a PPT.
+     */
+     _sharingPPT: boolean,
 
 
     /**
@@ -49,6 +57,19 @@ class UploadPresentationButton extends AbstractButton<Props, *> {
         this._doToggleUploadPresentation
     }
 
+
+        /**
+     * Indicates whether this button is in toggled state or not.
+     *
+     * @override
+     * @protected
+     * @returns {boolean}
+     */
+    _isToggled() {
+         return this.props._sharingPPT;
+    }
+    
+
     /**
      * Indicates whether this button is disabled or not.
      *
@@ -62,13 +83,13 @@ class UploadPresentationButton extends AbstractButton<Props, *> {
     
 
     /**
-     * Dispatches an action to toggle video sharing.
+     * Dispatches an action to toggle presentation sharing.
      *
      * @private
      * @returns {void}
      */
     _doToggleUploadPresentation(){
-        this.props.dispatch(togglePresentation())
+        this.props.dispatch(toggleSharedPresentation())
     }
 }
 
@@ -82,13 +103,24 @@ class UploadPresentationButton extends AbstractButton<Props, *> {
  * @returns {Props}
  */
  function _mapStateToProps(state, ownProps): Object {
-    const _localParticipant = getLocalParticipant(state);
+
+    //not able to access state here
+    const { ownerId=1, status: sharedPPTStatus } = state['features/presentation'];
+    const localParticipantId = getLocalParticipant(state).id;
     const enabled = getFeatureFlag(state, UPLOAD_PPT_ENABLED, true);
     const { visible = enabled } = ownProps;
 
+    if (ownerId !== localParticipantId) {
+        return {
+            _isDisabled: sharedPPTStatus,
+            _sharingPPT: false,
+            visible
+        };
+    }
+
     return {
-        _localParticipant,
-        // _raisedHand: _localParticipant.raisedHand,
+        _isDisabled: false,
+        _sharingPPT: sharedPPTStatus,
         visible
     };
 }

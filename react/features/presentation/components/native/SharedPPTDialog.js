@@ -1,0 +1,35 @@
+// @flow
+
+import React, { Component } from 'react';
+
+import { InputDialog } from '../../../base/dialog';
+import { connect } from '../../../base/redux';
+import { defaultMobileSharedVideoLink } from '../../constants';
+
+import AbstractSharedVideoDialog from '../AbstractSharedVideoDialog';
+
+/**
+ * Implements a component to render a display name prompt.
+ */
+class SharedPPTDialog extends AbstractSharedVideoDialog<*> {
+
+    /**
+     * Implements React's {@link Component#render()}.
+     *
+     * @inheritdoc
+     */
+    render() {
+        return (
+            <InputDialog
+                contentKey = 'dialog.shareVideoTitle'
+                // onSubmit = { this._onSetVideoLink }
+                // textInputProps = {{
+                //     placeholder: defaultMobileSharedVideoLink
+                // }} 
+                />
+        );
+    }
+}
+
+
+export default connect()(SharedPPTDialog);
