@@ -9,6 +9,7 @@ import { getLocalParticipant } from '../../../base/participants';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 import { toggleSharedPresentation } from '../../actions.native';
 import { getFeatureFlag, UPLOAD_PPT_ENABLED } from '../../../base/flags';
+import { Alert } from 'react-native';
 
 
 
@@ -54,7 +55,7 @@ class UploadPresentationButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        this._doToggleUploadPresentation
+        this._doToggleUploadPresentation()
     }
 
 
@@ -103,9 +104,7 @@ class UploadPresentationButton extends AbstractButton<Props, *> {
  * @returns {Props}
  */
  function _mapStateToProps(state, ownProps): Object {
-
-    //not able to access state here
-    const { ownerId=1, status: sharedPPTStatus } = state['features/presentation'];
+    const { ownerId, status: sharedPPTStatus } = state['features/presentation'];
     const localParticipantId = getLocalParticipant(state).id;
     const enabled = getFeatureFlag(state, UPLOAD_PPT_ENABLED, true);
     const { visible = enabled } = ownProps;

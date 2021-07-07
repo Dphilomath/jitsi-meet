@@ -1,17 +1,17 @@
 // @flow
 
-import React, { Component } from 'react';
+import React from 'react';
+import { View, Text, TextInput } from 'react-native';
 
-import { InputDialog } from '../../../base/dialog';
+import { InputDialog, AlertDialog, CustomSubmitDialog} from '../../../base/dialog';
 import { connect } from '../../../base/redux';
-import { defaultMobileSharedVideoLink } from '../../constants';
 
-import AbstractSharedVideoDialog from '../AbstractSharedVideoDialog';
+import AbstractSharedPPTDialog from '../AbstractSharedPPTDialog';
 
 /**
  * Implements a component to render a display name prompt.
  */
-class SharedPPTDialog extends AbstractSharedVideoDialog<*> {
+class SharedPPTDialog extends AbstractSharedPPTDialog<*> {
 
     /**
      * Implements React's {@link Component#render()}.
@@ -20,13 +20,15 @@ class SharedPPTDialog extends AbstractSharedVideoDialog<*> {
      */
     render() {
         return (
-            <InputDialog
-                contentKey = 'dialog.shareVideoTitle'
-                // onSubmit = { this._onSetVideoLink }
-                // textInputProps = {{
-                //     placeholder: defaultMobileSharedVideoLink
-                // }} 
-                />
+            <CustomSubmitDialog
+                onCancel = { this._onCancel }
+                onSubmit = { this._onLogin }>
+            <View>
+                <Text>Upload a presentation</Text>
+            </View>
+            <TextInput style={{borderColor:"red"}}/>
+                
+            </CustomSubmitDialog>
         );
     }
 }

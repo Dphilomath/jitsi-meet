@@ -5,7 +5,7 @@ import type { Dispatch } from 'redux';
 
 /**
  * The type of the React {@code Component} props of
- * {@link AbstractSharedVideoDialog}.
+ * {@link AbstractSharedPPTDialog}.
  */
 export type Props = {
 
@@ -26,7 +26,7 @@ export type Props = {
 };
 
 /**
- * Implements an abstract class for {@code SharedVideoDialog}.
+ * Implements an abstract class for {@code SharedPPTDialog}.
  */
 export default class AbstractSharedVideoDialog<S: *> extends Component < Props, S > {
 

@@ -49,13 +49,13 @@ export function setSharedPPTStatus({ status, time, ownerId }) {
  * @param {Function} onPostSubmit - The function to be invoked when a valid link is entered.
  * @returns {Function}
  */
-export function showSharedPPTDialog(onPostSubmit) {
-    return openDialog(SharedPPTDialog, { onPostSubmit });
+export function showSharedPPTDialog() {
+    return openDialog(SharedPPTDialog);
 }
 
 /**
  *
- * Stops playing a shared video.
+ * Stops playing a shared PPT.
  *
  * @returns {Function}
  */
@@ -109,7 +109,7 @@ export function toggleSharedPresentation() {
         if (status === true ) {
             dispatch(stopSharedPPT());
         } else {
-            dispatch(showSharedPPTDialog(() => dispatch(playSharedPPT())));
+            dispatch(showSharedPPTDialog());
         }
     };
 }
