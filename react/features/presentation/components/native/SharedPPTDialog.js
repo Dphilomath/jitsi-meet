@@ -79,7 +79,11 @@ const styles = StyleSheet.create({
       // flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
+<<<<<<< HEAD
       backgroundColor: '#F5FCFF',
+=======
+      // backgroundColor: '#F5FCFF',
+>>>>>>> pptDialog
       height:100
     },
     button: {
