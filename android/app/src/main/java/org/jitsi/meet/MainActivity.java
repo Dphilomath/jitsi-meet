@@ -40,6 +40,12 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
 
+import com.filepicker.FilePickerPackage;
+import java.util.*;
+import com.facebook.react.shell.MainReactPackage;
+import com.facebook.react.ReactPackage;
+
+
 /**
  * The one and only Activity that the Jitsi Meet app needs. The
  * {@code Activity} is launched in {@code singleTask} mode, so it will be
@@ -225,6 +231,13 @@ public class MainActivity extends JitsiMeetActivity {
             this.startActivity(new Intent(this, getClass())
                 .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));
         }
+    }
+
+    protected List<ReactPackage> getPackages() {
+        return Arrays.<ReactPackage>asList(
+            new MainReactPackage(),
+            new FilePickerPackage() // Add package
+        );
     }
 
     // Helper methods
