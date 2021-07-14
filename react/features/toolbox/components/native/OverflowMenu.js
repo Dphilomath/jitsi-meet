@@ -23,6 +23,7 @@ import MuteEveryoneButton from '../MuteEveryoneButton';
 import MuteEveryonesVideoButton from '../MuteEveryonesVideoButton';
 
 import { UploadPresentationButton } from '../../../presentation/components'
+import { SharePresentationButton } from '../../../share-ppt/components'
 
 import AudioOnlyButton from './AudioOnlyButton';
 import MoreOptionsButton from './MoreOptionsButton';
@@ -141,6 +142,7 @@ class OverflowMenu extends PureComponent<Props, State> {
                 {!toolbarButtons.has('invite') && <InviteButton { ...buttonProps } />}
                 <AudioOnlyButton { ...buttonProps } />
                 <UploadPresentationButton { ...buttonProps }/>
+                <SharePresentationButton { ...buttonProps }/>
                 {!toolbarButtons.has('raisehand') && <RaiseHandButton { ...buttonProps } />}
                 <SecurityDialogButton { ...buttonProps } />
                 <ScreenSharingButton { ...buttonProps } />
