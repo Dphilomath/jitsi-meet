@@ -9,4 +9,5 @@ import '../mobile/incoming-call/reducer';
 import '../mobile/watchos/reducer';
 import '../shared-video/reducer';
 import '../presentation/reducer'
+import '../share-ppt/reducer';
 import './reducers.any';

@@ -3,14 +3,12 @@ import type { Dispatch } from 'redux';
 
 
 import { translate } from '../../../base/i18n';
-import { IconPPT } from '../../../base/icons';
+import { IconSharePPT } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { getLocalParticipant } from '../../../base/participants';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 import { toggleSharedPresentation } from '../../actions.native';
 import { getFeatureFlag, UPLOAD_PPT_ENABLED } from '../../../base/flags';
-import { Alert } from 'react-native';
-
 
 
 /**
@@ -41,11 +39,11 @@ import { Alert } from 'react-native';
  *
  * @extends AbstractButton
  */
-class UploadPresentationButton extends AbstractButton<Props, *> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.uploadPresentation';
-    icon = IconPPT;
-    label = 'toolbar.uploadPresentation';
-    toggledLabel= 'toggled';
+class SharePresentationButton extends AbstractButton<Props, *> {
+    accessibilityLabel = 'toolbar.accessibilityLabel.sharePresentation';
+    icon = IconSharePPT;
+    label = 'toolbar.sharePresentation';
+    toggledLabel = 'toolbar.stopPresentation';
 
     /**
      * Handles clicking / pressing the button.
@@ -104,7 +102,7 @@ class UploadPresentationButton extends AbstractButton<Props, *> {
  * @returns {Props}
  */
  function _mapStateToProps(state, ownProps): Object {
-    const { ownerId, status: sharedPPTStatus } = state['features/presentation'];
+    const { ownerId, status: sharedPPTStatus } = state['features/shared-ppt'];
     const localParticipantId = getLocalParticipant(state).id;
     const enabled = getFeatureFlag(state, UPLOAD_PPT_ENABLED, true);
     const { visible = enabled } = ownProps;
@@ -112,16 +110,16 @@ class UploadPresentationButton extends AbstractButton<Props, *> {
     if (ownerId !== localParticipantId) {
         return {
             _isDisabled: sharedPPTStatus,
-            // _sharingPPT: false,
+            _sharingPPT: false,
             visible
         };
     }
 
     return {
         _isDisabled: false,
-        // _sharingPPT: sharedPPTStatus,
+        _sharingPPT: sharedPPTStatus,
         visible
     };
 }
 
-export default translate(connect(_mapStateToProps)(UploadPresentationButton));
+export default translate(connect(_mapStateToProps)(SharePresentationButton));

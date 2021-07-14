@@ -347,7 +347,8 @@
         "Yes": "Yes",
         "yourEntireScreen": "Your entire screen",
         "remoteUserControls": "Remote user controls of {{username}}",
-        "localUserControls": "Local user controls"
+        "localUserControls": "Local user controls",
+        "startPresenting": "Are you sure you want to share Presentation"
     },
     "dialOut": {
         "statusMessage": "is now {{status}}"
@@ -855,7 +856,8 @@
             "expand": "Expand",
             "collapse": "Collapse",
             "uploadPresentation":"Upload Presentation",
-            "stopPresentation": "Stop Presentation"
+            "stopPresentation": "Stop Presentation",
+            "sharePresentation":"Share Presentation"
         },
         "addPeople": "Add people to your call",
         "audioSettings": "Audio settings",
@@ -922,7 +924,9 @@
         "toggleCamera": "Toggle camera",
         "videomute": "Start / Stop camera",
         "selectBackground": "Select background",
-        "uploadPresentation" : "Upload Presentation"
+        "uploadPresentation" : "Upload Presentation",
+        "sharePresentation":"Share Presentation",
+        "stopPresentation" : "Stop Presentation"
     },
     "transcribing": {
         "ccButtonTooltip": "Start / Stop subtitles",
