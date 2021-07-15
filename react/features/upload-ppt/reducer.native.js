@@ -7,9 +7,9 @@ import { RESET_SHARED_PPT_STATUS, SET_SHARED_PPT_STATUS } from './actionTypes';
 const initialState = {};
 
 /**
- * Reduces the Redux actions of the feature features/presentation.
+ * Reduces the Redux actions of the feature features/upload-ppt.
  */
-ReducerRegistry.register('features/presentation', (state = initialState, action) => {
+ReducerRegistry.register('features/upload-ppt', (state = initialState, action) => {
     const { status, time, ownerId } = action;
 
     switch (action.type) {
