@@ -62,7 +62,7 @@ export function showSharedPPTDialog() {
 export function stopSharedPPT() {
     return (dispatch, getState) => {
         const state = getState();
-        const { ownerId } = state['features/presentation'];
+        const { ownerId } = state['features/upload-ppt'];
         const localParticipant = getLocalParticipant(state);
 
         if (ownerId === localParticipant.id) {
@@ -104,7 +104,7 @@ export function playSharedPPT() {
 export function toggleSharedPresentation() {
     return (dispatch, getState) => {
         const state = getState();
-        const { status } = state['features/presentation'];
+        const { status } = state['features/upload-ppt'];
 
         if (status === true ) {
             dispatch(stopSharedPPT());

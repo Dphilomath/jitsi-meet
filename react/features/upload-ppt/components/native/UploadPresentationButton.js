@@ -104,7 +104,7 @@ class UploadPresentationButton extends AbstractButton<Props, *> {
  * @returns {Props}
  */
  function _mapStateToProps(state, ownProps): Object {
-    const { ownerId, status: sharedPPTStatus } = state['features/presentation'];
+    const { ownerId, status: sharedPPTStatus } = state['features/upload-ppt'];
     const localParticipantId = getLocalParticipant(state).id;
     const enabled = getFeatureFlag(state, UPLOAD_PPT_ENABLED, true);
     const { visible = enabled } = ownProps;
