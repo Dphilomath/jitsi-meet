@@ -23,6 +23,7 @@ import MuteEveryoneButton from '../MuteEveryoneButton';
 import MuteEveryonesVideoButton from '../MuteEveryonesVideoButton';
 
 import { UploadPresentationButton } from '../../../upload-ppt/components'
+import { SharePresentationButton } from '../../../share-ppt/components'
 
 import AudioOnlyButton from './AudioOnlyButton';
 import MoreOptionsButton from './MoreOptionsButton';

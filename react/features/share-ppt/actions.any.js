@@ -81,7 +81,7 @@ export function stopSharedPPT() {
  */
 export function playSharedPPT() {
     return (dispatch, getState) => {
-        const {status: uploaded = false} = getState()['features/presentation']
+        const {status: uploaded = false} = getState()['features/upload-ppt']
         dispatch(openDialog(PPTDialog, { uploaded }))
     }
 }
