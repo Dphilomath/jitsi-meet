@@ -5,11 +5,11 @@
  * shared PPT.
  *
  * {
- *     type: SET_SHARED_PPT_STATUS,
+ *     type: SET_UPLOAD_PPT_STATUS,
  *     status: string
  * }
  */
-export const SET_SHARED_PPT_STATUS = 'SET_SHARED_PPT_STATUS';
+export const SET_UPLOAD_PPT_STATUS = 'SET_UPLOAD_PPT_STATUS';
 
 /**
  * The type of the action which signals to reset the current known state of the
@@ -19,7 +19,7 @@ export const SET_SHARED_PPT_STATUS = 'SET_SHARED_PPT_STATUS';
  *     type: RESET_SHARED_PPT_STATUS,
  * }
  */
-export const RESET_SHARED_PPT_STATUS = 'RESET_SHARED_PPT_STATUS';
+export const RESET_UPLOAD_PPT_STATUS = 'RESET_SHARED_PPT_STATUS';
 
 /**
  * The type of the action which signals to disable or enable the shared PPT
@@ -30,3 +30,5 @@ export const RESET_SHARED_PPT_STATUS = 'RESET_SHARED_PPT_STATUS';
  * }
  */
 export const SET_DISABLE_BUTTON = 'SET_DISABLE_BUTTON';
+
+export const RETRY_UPLOAD = 'RETRY_UPLOAD'

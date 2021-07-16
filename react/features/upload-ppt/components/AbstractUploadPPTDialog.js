@@ -26,9 +26,9 @@ export type Props = {
 };
 
 /**
- * Implements an abstract class for {@code SharedPPTDialog}.
+ * Implements an abstract class for {@code UploadPPTDialog}.
  */
-export default class AbstractSharedVideoDialog<S: *> extends Component < Props, S > {
+export default class AbstractUploadPPTDialog<S: *> extends Component < Props, S > {
 
     /**
      * Instantiates a new component.

@@ -1,4 +1,4 @@
 // @flow
 
 export { default as UploadPresentationButton } from './UploadPresentationButton'
-export { default as SharedPPTDialog } from './SharedPPTDialog'
+export { default as UploadPPTDialog } from './UploadPPTDialog'

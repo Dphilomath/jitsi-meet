@@ -7,7 +7,7 @@ import { IconPPT } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { getLocalParticipant } from '../../../base/participants';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
-import { toggleSharedPresentation } from '../../actions.native';
+import { toggleUploadPresentation } from '../../actions.native';
 import { getFeatureFlag, UPLOAD_PPT_ENABLED } from '../../../base/flags';
 import { Alert } from 'react-native';
 
@@ -22,13 +22,6 @@ import { Alert } from 'react-native';
      * Whether or not the button is disabled.
      */
     _isDisabled: boolean,
-
-
-    /**
-     * Whether or not the local participant is sharing a PPT.
-     */
-     _sharingPPT: boolean,
-
 
     /**
      * The redux {@code dispatch} function.
@@ -84,13 +77,13 @@ class UploadPresentationButton extends AbstractButton<Props, *> {
     
 
     /**
-     * Dispatches an action to toggle presentation sharing.
+     * Dispatches an action to toggle presentation upload.
      *
      * @private
      * @returns {void}
      */
     _doToggleUploadPresentation(){
-        this.props.dispatch(toggleSharedPresentation())
+        this.props.dispatch(toggleUploadPresentation())
     }
 }
 
@@ -104,22 +97,20 @@ class UploadPresentationButton extends AbstractButton<Props, *> {
  * @returns {Props}
  */
  function _mapStateToProps(state, ownProps): Object {
-    const { ownerId, status: sharedPPTStatus } = state['features/upload-ppt'];
+    const { ownerId, status } = state['features/upload-ppt'];
     const localParticipantId = getLocalParticipant(state).id;
     const enabled = getFeatureFlag(state, UPLOAD_PPT_ENABLED, true);
     const { visible = enabled } = ownProps;
 
     if (ownerId !== localParticipantId) {
         return {
-            _isDisabled: sharedPPTStatus,
-            _sharingPPT: false,
+            _isDisabled: false,
             visible
         };
     }
 
     return {
         _isDisabled: false,
-        _sharingPPT: sharedPPTStatus,
         visible
     };
 }
