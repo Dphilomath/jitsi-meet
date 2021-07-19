@@ -39,16 +39,12 @@ export function getVpaasTenant(state: Object) {
  * @returns {boolean}
  */
 export function isVpaasMeeting(state: Object) {
-    const { billingCounterUrl, iAmRecorder, iAmSipGateway } = state['features/base/config'];
-    const { jwt } = state['features/base/jwt'];
-
-    const isAllowed = iAmRecorder || iAmSipGateway || Boolean(jwt);
+    const { billingCounterUrl } = state['features/base/config'];
 
     return Boolean(
         billingCounterUrl
         && extractVpaasTenantFromPath(
             state['features/base/connection'].locationURL.pathname)
-        && isAllowed
     );
 }
 
