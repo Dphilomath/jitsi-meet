@@ -3,7 +3,7 @@ import { openDialog } from '../base/dialog/actions';
 import { getLocalParticipant } from '../base/participants';
 import { UploadPPTDialog } from './components';
 
-import { RESET_UPLOAD_PPT_STATUS, SET_UPLOAD_PPT_STATUS, RETRY_UPLOAD } from './actionTypes';
+import { RESET_UPLOAD_PPT_STATUS, SET_UPLOAD_PPT_STATUS, RETRY_UPLOAD, TRY_UPLOAD } from './actionTypes';
 
 /**
  * Resets the status of the upload PPT.
@@ -18,6 +18,7 @@ export function resetUploadPPTStatus() {
     };
 }
 
+
 export function setUploadPPTStatus(file) {
     return (dispatch, getState) => {
     
@@ -26,19 +27,13 @@ export function setUploadPPTStatus(file) {
         if (conference) {
             const localParticipant = getLocalParticipant(getState());
             dispatch({
-                type: SET_UPLOAD_PPT_STATUS,
+                type: TRY_UPLOAD,
                 file,
                 ownerId: localParticipant.id
             });
         }
     };
 }
-export function retryUpload(){
-    return {
-        type: RETRY_UPLOAD
-    }
-}
-
 /**
  * Displays the dialog for uploading presentation.
  *

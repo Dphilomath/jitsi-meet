@@ -2,7 +2,7 @@
 
 import { ReducerRegistry } from '../base/redux';
 
-import { SET_UPLOAD_PPT_STATUS, RESET_UPLOAD_PPT_STATUS, RETRY_UPLOAD} from './actionTypes';
+import { SET_UPLOAD_PPT_STATUS, RESET_UPLOAD_PPT_STATUS, RETRY_UPLOAD, SET_UPLOADING} from './actionTypes';
 
 const initialState = {};
 
@@ -10,7 +10,7 @@ const initialState = {};
  * Reduces the Redux actions of the feature features/upload-ppt.
  */
 ReducerRegistry.register('features/upload-ppt', (state = initialState, action) => {
-    const { file, status, ownerId } = action;
+    const { file, status, ownerId, loading } = action;
 
     switch (action.type) {
     case RESET_UPLOAD_PPT_STATUS:
@@ -22,10 +22,9 @@ ReducerRegistry.register('features/upload-ppt', (state = initialState, action) =
             status,
             file
         };
-    case RETRY_UPLOAD:
+    case SET_UPLOADING:
         return {
-            failed: true,
-            loading: false
+            loading
         }
     default:
         return state;

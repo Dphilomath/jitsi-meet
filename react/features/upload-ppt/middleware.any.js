@@ -4,8 +4,11 @@ import { CONFERENCE_LEFT, getCurrentConference, getRoomName} from '../base/confe
 import { getLocalParticipant, PARTICIPANT_LEFT, participantLeft } from '../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 
-import { SET_UPLOAD_PPT_STATUS } from './actionTypes';
+import { SET_UPLOAD_PPT_STATUS, SET_UPLOADING, TRY_UPLOAD } from './actionTypes';
 import { resetUploadPPTStatus, retryUpload, setUploadPPTStatus } from './actions.any';
+import { batch } from 'react-redux';
+import { openDialog } from '../base/dialog/actions';
+import { AlertDialog } from '../base/dialog/components'
 
 
 /**
@@ -22,49 +25,74 @@ MiddlewareRegistry.register(store => next => async action => {
     const localParticipantId = getLocalParticipant(state)?.id;
     const { file, ownerId } = action;
 
-
     switch (action.type) {
 
         case CONFERENCE_LEFT:
             dispatch(resetUploadPPTStatus());
             break;
 
-        case SET_UPLOAD_PPT_STATUS:
+        case TRY_UPLOAD:
             if (localParticipantId === ownerId) {
                 try{
-                    var formdata = new FormData();
+                    const formdata = new FormData();
                     formdata.append("sampleFile", { name: file.fileName, uri: file.uri, type: file.type });
                     formdata.append("username", room)
 
-                    var requestOptions = {
+                    const requestOptions = {
                         method: 'POST',
                         body: formdata,
                         redirect: 'follow'
                     };
 
+                    dispatch({ 
+                                type: SET_UPLOADING,
+                                loading: true 
+                            })
+                  
+
                     fetch("https://sangoshthee.cdac.in/FileUploadService", requestOptions)
-                        .then(response => response.json())
+                        .then(response => response.text())
                         .then(result =>  { 
                             console.log(result)
                             if(result.status === "1"){
                                 dispatch({
                                     type: SET_UPLOAD_PPT_STATUS,
-                                    ownerId: localParticipantId,
+                                    file,
                                     status: result.status,
                                     ownerId
                                 })
                             }
-                            else dispatch(retryUpload())
+                            dispatch(openDialog(AlertDialog, {
+                                contentKey:{
+                                    key: result.message
+                                }
+                            }))
                         })
-                        .catch(error => console.log('error', error)); 
+                        .catch(error => {
+                            console.log('error', error)
+                            dispatch(openDialog(AlertDialog, {
+                                contentKey:error
+                            }))
+                        }); 
+                        dispatch({ 
+                            type: SET_UPLOADING,
+                            loading:false 
+                        })
                 } catch(err){
                     console.log(err)
+                    dispatch({ 
+                        type: SET_UPLOADING,
+                        loading: false 
+                    })
                 }
             }
             break;
 
         case PARTICIPANT_LEFT:
-            dispatch(participantLeft(localParticipantId, conference, false));
+            batch(()=>{
+                dispatch(participantLeft(localParticipantId, conference, false));
+                dispatch(resetUploadPPTStatus())
+            })
             break;
         }
 
