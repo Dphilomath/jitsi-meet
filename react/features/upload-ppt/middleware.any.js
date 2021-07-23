@@ -51,27 +51,44 @@ MiddlewareRegistry.register(store => next => async action => {
                   
 
                     fetch("https://sangoshthee.cdac.in/FileUploadService", requestOptions)
-                        .then(response => response.text())
+                        .then(response => {
+                            if(response.status !== 200){
+                                dispatch(openDialog(AlertDialog, {
+                                    contentKey:{
+                                        key: response.status
+                                    }
+                                }))
+                                
+                            }
+                            else return response.json()
+                        })
                         .then(result =>  { 
                             console.log(result)
-                            if(result.status === "1"){
+                            if(result.status === "1" || result.status === "0" ){
                                 dispatch({
                                     type: SET_UPLOAD_PPT_STATUS,
                                     file,
                                     status: result.status,
                                     ownerId
                                 })
-                            }
-                            dispatch(openDialog(AlertDialog, {
-                                contentKey:{
-                                    key: result.message
+                                dispatch(openDialog(AlertDialog, {
+                                    contentKey:{
+                                        key: result.msg
+                                    }
+                                }))
+                            }else dispatch(openDialog(AlertDialog, {
+                                contentKey: {
+                                    key: "Server Error"
                                 }
                             }))
+                           
                         })
                         .catch(error => {
                             console.log('error', error)
                             dispatch(openDialog(AlertDialog, {
-                                contentKey:error
+                                contentKey:{
+                                    key: error
+                                }
                             }))
                         }); 
                         dispatch({ 
