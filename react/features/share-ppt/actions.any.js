@@ -1,4 +1,4 @@
-import { getCurrentConference } from '../base/conference';
+import { getCurrentConference, getConferenceState } from '../base/conference';
 import { openDialog } from '../base/dialog/actions';
 import { getLocalParticipant } from '../base/participants';
 import { SharedPPTDialog, PPTDialog } from './components';
@@ -24,22 +24,20 @@ export function resetSharedPPTStatus() {
  * @param {{
  *     ownerId: string,
  *     status: boolean,
- *     time: number
  * }} options - The options.
  *
  * @returns {{
  *     type: SET_SHARED_PPT_STATUS,
  *     ownerId: string,
  *     status: boolean,
- *     time: number
  * }}
  */
-export function setSharedPPTStatus({ status, time, ownerId }) {
+ export function setSharedPPTStatus({ url, status, ownerId }) {
     return {
         type: SET_SHARED_PPT_STATUS,
         ownerId,
         status,
-        time
+        url
     };
 }
 
@@ -79,11 +77,21 @@ export function stopSharedPPT() {
  *
  * @returns {Function}
  */
-export function playSharedPPT() {
+ export function playSharedPPT()     {
     return (dispatch, getState) => {
-        const {status: uploaded = false} = getState()['features/presentation']
-        dispatch(openDialog(PPTDialog, { uploaded }))
-    }
+        const conference = getCurrentConference(getState());
+        const url = 'https://sangoshthee.cdac.in/presentation/?meetingId=' + getConferenceState(getState()).room;
+
+        if (conference) {
+            const localParticipant = getLocalParticipant(getState());
+
+            dispatch(setSharedPPTStatus({
+                url,
+                status: 'start',
+                ownerId: localParticipant.id
+            }));
+        }
+    };
 }
 
 /**
@@ -96,10 +104,10 @@ export function toggleSharedPresentation() {
     return (dispatch, getState) => {
         const state = getState();
         const { status } = state['features/shared-ppt'];
-        if (status === true ) {
+        if (status === 'start' ) {
             dispatch(stopSharedPPT());
         } else {
-            dispatch(showSharedPPTDialog(( ) => dispatch(playSharedPPT())));
+            dispatch(showSharedPPTDialog(() => dispatch(playSharedPPT())));
         }
     };
 }

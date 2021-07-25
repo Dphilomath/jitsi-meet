@@ -42,7 +42,7 @@ class SharedPPTDialog extends AbstractSharedPPTDialog<*> {
             const { onPostSubmit } = this.props;
             onPostSubmit && onPostSubmit();
             
-            return false;
+            return true;
         }
 }
 
