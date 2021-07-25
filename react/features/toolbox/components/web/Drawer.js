@@ -1,16 +1,9 @@
 // @flow
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback } from 'react';
 
-import { translate } from '../../../base/i18n';
-import { Icon, IconArrowUpWide, IconArrowDownWide } from '../../../base/icons';
 
 type Props = {
-
-    /**
-     * Whether the drawer should have a button that expands its size or not.
-     */
-    canExpand: ?boolean,
 
     /**
      * The component(s) to be displayed within the drawer menu.
@@ -18,19 +11,14 @@ type Props = {
     children: React$Node,
 
     /**
-     Whether the drawer should be shown or not.
+     * Whether the drawer should be shown or not.
      */
     isOpen: boolean,
 
     /**
-     Function that hides the drawer.
+     * Function that hides the drawer.
      */
-    onClose: Function,
-
-    /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function
+    onClose: Function
 };
 
 /**
@@ -39,83 +27,44 @@ type Props = {
  * @returns {ReactElement}
  */
 function Drawer({
-    canExpand,
     children,
     isOpen,
-    onClose,
-    t }: Props) {
-    const [ expanded, setExpanded ] = useState(false);
-    const drawerRef: Object = useRef(null);
+    onClose }: Props) {
 
     /**
-     * Closes the drawer when clicking or touching outside of it.
+     * Handles clicks within the menu, preventing the propagation of the click event.
      *
-     * @param {Event} event - Mouse down/start touch event object.
+     * @param {Object} event - The click event.
      * @returns {void}
      */
-    function handleOutsideClickOrTouch(event: Event) {
-        if (drawerRef.current && !drawerRef.current.contains(event.target)) {
-            onClose();
-        }
-    }
-
-    useEffect(() => {
-        window.addEventListener('mousedown', handleOutsideClickOrTouch);
-        window.addEventListener('touchstart', handleOutsideClickOrTouch);
-
-        return () => {
-            window.removeEventListener('mousedown', handleOutsideClickOrTouch);
-            window.removeEventListener('touchstart', handleOutsideClickOrTouch);
-        };
-    }, [ drawerRef ]);
+    const handleInsideClick = useCallback(event => {
+        event.stopPropagation();
+    }, []);
 
     /**
-     * Toggles the menu state between expanded/collapsed.
+     * Handles clicks outside of the menu, closing it, and also stopping further propagation.
      *
+     * @param {Object} event - The click event.
      * @returns {void}
      */
-    function toggleExpanded() {
-        setExpanded(!expanded);
-    }
-
-    /**
-     * KeyPress handler for accessibility.
-     *
-     * @param {React.KeyboardEventHandler<HTMLDivElement>} e - The key event to handle.
-     *
-     * @returns {void}
-     */
-    function onKeyPress(e) {
-        if (e.key === ' ' || e.key === 'Enter') {
-            e.preventDefault();
-            toggleExpanded();
-        }
-    }
+    const handleOutsideClick = useCallback(event => {
+        event.stopPropagation();
+        onClose();
+    }, [ onClose ]);
 
     return (
         isOpen ? (
             <div
-                className = { `drawer-menu${expanded ? ' expanded' : ''}` }
-                ref = { drawerRef }>
-                {canExpand && (
-                    <div
-                        aria-expanded = { expanded }
-                        aria-label = { expanded ? t('toolbar.accessibilityLabel.collapse')
-                            : t('toolbar.accessibilityLabel.expand') }
-                        className = 'drawer-toggle'
-                        onClick = { toggleExpanded }
-                        onKeyPress = { onKeyPress }
-                        role = 'button'
-                        tabIndex = { 0 }>
-                        <Icon
-                            size = { 24 }
-                            src = { expanded ? IconArrowDownWide : IconArrowUpWide } />
-                    </div>
-                )}
-                {children}
+                className = 'drawer-menu-container'
+                onClick = { handleOutsideClick }>
+                <div
+                    className = 'drawer-menu'
+                    onClick = { handleInsideClick }>
+                    {children}
+                </div>
             </div>
         ) : null
     );
 }
 
-export default translate(Drawer);
+export default Drawer;

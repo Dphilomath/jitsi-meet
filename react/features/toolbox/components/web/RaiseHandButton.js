@@ -11,12 +11,12 @@ type Props = AbstractButtonProps & {
     /**
      * Whether or not the local participant's hand is raised.
      */
-     _raisedHand: boolean,
+    _raisedHand: boolean,
 
-     /**
-      * External handler for click action.
-      */
-     handleClick: Function
+    /**
+     * External handler for click action.
+     */
+    handleClick: Function
 };
 
 /**

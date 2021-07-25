@@ -220,3 +220,8 @@ export const WELCOME_PAGE_ENABLED = 'welcomepage.enabled';
  * Flag indicating if the upload presentation button should be enabled..
  */
 export const UPLOAD_PPT_ENABLED = 'upload-presentation.enabled'
+/**
+ * Flag indicating if the reactions feature should be enabled.
+ * Default: disabled (false).
+ */
+export const REACTIONS_ENABLED = 'reactions.enabled';

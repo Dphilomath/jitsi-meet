@@ -22,12 +22,13 @@ import {
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { getLocalVideoTrack } from '../../../base/tracks';
-import { isVpaasMeeting } from '../../../billing-counter/functions';
 import { toggleChat } from '../../../chat';
 import { ChatButton } from '../../../chat/components';
+import { DominantSpeakerName } from '../../../display-name';
 import { EmbedMeetingButton } from '../../../embed-meeting';
 import { SharedDocumentButton } from '../../../etherpad';
 import { FeedbackButton } from '../../../feedback';
+import { isVpaasMeeting } from '../../../jaas/functions';
 import { KeyboardShortcutsButton } from '../../../keyboard-shortcuts';
 import { LocalRecordingButton } from '../../../local-recording';
 import {
@@ -36,6 +37,9 @@ import {
 } from '../../../participants-pane/actions';
 import ParticipantsPaneButton from '../../../participants-pane/components/ParticipantsPaneButton';
 import { getParticipantsPaneOpen } from '../../../participants-pane/functions';
+import { addReactionToBuffer } from '../../../reactions/actions.any';
+import { ReactionsMenuButton } from '../../../reactions/components';
+import { REACTIONS } from '../../../reactions/constants';
 import {
     LiveStreamButton,
     RecordButton
@@ -69,7 +73,7 @@ import {
     setToolbarHovered,
     showToolbox
 } from '../../actions';
-import { THRESHOLDS } from '../../constants';
+import { THRESHOLDS, NOT_APPLICABLE } from '../../constants';
 import { isToolboxVisible } from '../../functions';
 import DownloadButton from '../DownloadButton';
 import HangupButton from '../HangupButton';
@@ -84,6 +88,7 @@ import ProfileButton from './ProfileButton';
 import RaiseHandButton from './RaiseHandButton';
 import Separator from './Separator';
 import ShareDesktopButton from './ShareDesktopButton';
+import ToggleCameraButton from './ToggleCameraButton';
 import VideoSettingsButton from './VideoSettingsButton';
 
 /**
@@ -210,7 +215,12 @@ type Props = {
     /**
      * Returns the selected virtual source object.
      */
-     _virtualSource: Object,
+    _virtualSource: Object,
+
+    /**
+     * Whether or not reactions feature is enabled.
+     */
+    _reactionsEnabled: boolean,
 
     /**
      * Invoked to active other features of the app.
@@ -269,7 +279,7 @@ class Toolbox extends Component<Props> {
      * @returns {void}
      */
     componentDidMount() {
-        const { _toolbarButtons } = this.props;
+        const { _toolbarButtons, t, dispatch, _reactionsEnabled } = this.props;
         const KEYBOARD_SHORTCUTS = [
             isToolbarButtonEnabled('videoquality', _toolbarButtons) && {
                 character: 'A',
@@ -317,6 +327,33 @@ class Toolbox extends Component<Props> {
                     shortcut.helpDescription);
             }
         });
+
+        if (_reactionsEnabled) {
+            const REACTION_SHORTCUTS = Object.keys(REACTIONS).map(key => {
+                const onShortcutSendReaction = () => {
+                    dispatch(addReactionToBuffer(key));
+                    sendAnalytics(createShortcutEvent(
+                        `reaction.${key}`
+                    ));
+                };
+
+                return {
+                    character: REACTIONS[key].shortcutChar,
+                    exec: onShortcutSendReaction,
+                    helpDescription: t(`toolbar.reaction${key.charAt(0).toUpperCase()}${key.slice(1)}`),
+                    altKey: true
+                };
+            });
+
+            REACTION_SHORTCUTS.forEach(shortcut => {
+                APP.keyboardshortcut.registerShortcut(
+                    shortcut.character,
+                    null,
+                    shortcut.exec,
+                    shortcut.helpDescription,
+                    shortcut.altKey);
+            });
+        }
     }
 
     /**
@@ -347,6 +384,12 @@ class Toolbox extends Component<Props> {
     componentWillUnmount() {
         [ 'A', 'C', 'D', 'R', 'S' ].forEach(letter =>
             APP.keyboardshortcut.unregisterShortcut(letter));
+
+        if (this.props._reactionsEnabled) {
+            Object.keys(REACTIONS).map(key => REACTIONS[key].shortcutChar)
+                .forEach(letter =>
+                    APP.keyboardshortcut.unregisterShortcut(letter, true));
+        }
     }
 
     /**
@@ -510,7 +553,8 @@ class Toolbox extends Component<Props> {
         const {
             _feedbackConfigured,
             _isMobile,
-            _screenSharing
+            _screenSharing,
+            _reactionsEnabled
         } = this.props;
 
         const microphone = {
@@ -547,13 +591,14 @@ class Toolbox extends Component<Props> {
 
         const raisehand = {
             key: 'raisehand',
-            Content: RaiseHandButton,
-            handleClick: this._onToolbarToggleRaiseHand,
+            Content: _reactionsEnabled ? ReactionsMenuButton : RaiseHandButton,
+            handleClick: _reactionsEnabled ? null : this._onToolbarToggleRaiseHand,
             group: 2
         };
 
         const participants = {
             key: 'participants-pane',
+            alias: 'invite',
             Content: ParticipantsPaneButton,
             handleClick: this._onToolbarToggleParticipantsPane,
             group: 2
@@ -562,6 +607,12 @@ class Toolbox extends Component<Props> {
         const tileview = {
             key: 'tileview',
             Content: TileViewButton,
+            group: 2
+        };
+
+        const toggleCamera = {
+            key: 'toggle-camera',
+            Content: ToggleCameraButton,
             group: 2
         };
 
@@ -581,12 +632,7 @@ class Toolbox extends Component<Props> {
 
         const security = {
             key: 'security',
-            Content: SecurityDialogButton,
-            group: 2
-        };
-
-        const info = {
-            key: 'info',
+            alias: 'info',
             Content: SecurityDialogButton,
             group: 2
         };
@@ -702,10 +748,10 @@ class Toolbox extends Component<Props> {
             raisehand,
             participants,
             tileview,
+            toggleCamera,
             videoQuality,
             fullscreen,
             security,
-            info,
             cc,
             recording,
             localRecording,
@@ -750,7 +796,8 @@ class Toolbox extends Component<Props> {
         const filtered = [
             ...order.map(key => buttons[key]),
             ...Object.values(buttons).filter((button, index) => !order.includes(keys[index]))
-        ].filter(Boolean).filter(({ key }) => isToolbarButtonEnabled(key, _toolbarButtons));
+        ].filter(Boolean).filter(({ key, alias = NOT_APPLICABLE }) =>
+            isToolbarButtonEnabled(key, _toolbarButtons) || isToolbarButtonEnabled(alias, _toolbarButtons));
 
         if (isHangupVisible) {
             sliceIndex -= 1;
@@ -1118,7 +1165,8 @@ class Toolbox extends Component<Props> {
             _isMobile,
             _overflowMenuVisible,
             _toolbarButtons,
-            t
+            t,
+            _reactionsEnabled
         } = this.props;
 
         const toolbarAccLabel = 'toolbar.accessibilityLabel.moreActionsMenu';
@@ -1133,6 +1181,7 @@ class Toolbox extends Component<Props> {
                     onFocus = { this._onTabIn }
                     onMouseOut = { this._onMouseOut }
                     onMouseOver = { this._onMouseOver }>
+                    <DominantSpeakerName />
                     <div className = 'toolbox-content-items'>
                         {mainMenuButtons.map(({ Content, key, ...rest }) => Content !== Separator && (
                             <Content
@@ -1144,7 +1193,10 @@ class Toolbox extends Component<Props> {
                                 ariaControls = 'overflow-menu'
                                 isOpen = { _overflowMenuVisible }
                                 key = 'overflow-menu'
-                                onVisibilityChange = { this._onSetOverflowVisible }>
+                                onVisibilityChange = { this._onSetOverflowVisible }
+                                showMobileReactions = {
+                                    _reactionsEnabled && overflowMenuButtons.find(({ key }) => key === 'raisehand')
+                                }>
                                 <ul
                                     aria-label = { t(toolbarAccLabel) }
                                     className = 'overflow-menu'
@@ -1154,15 +1206,15 @@ class Toolbox extends Component<Props> {
                                     {overflowMenuButtons.map(({ group, key, Content, ...rest }, index, arr) => {
                                         const showSeparator = index > 0 && arr[index - 1].group !== group;
 
-                                        return (
-                                            <>
+                                        return (key !== 'raisehand' || !_reactionsEnabled)
+                                            && <>
                                                 {showSeparator && <Separator key = { `hr${group}` } />}
                                                 <Content
                                                     { ...rest }
                                                     key = { key }
                                                     showLabel = { true } />
                                             </>
-                                        );
+                                        ;
                                     })}
                                 </ul>
                             </OverflowMenuButton>
@@ -1201,6 +1253,7 @@ function _mapStateToProps(state) {
     const localParticipant = getLocalParticipant(state);
     const localVideo = getLocalVideoTrack(state['features/base/tracks']);
     const { clientWidth } = state['features/base/responsive-ui'];
+    const { enableReactions } = state['features/base/config'];
 
     let desktopSharingDisabledTooltipKey;
 
@@ -1236,7 +1289,8 @@ function _mapStateToProps(state) {
         _screenSharing: isScreenVideoShared(state),
         _toolbarButtons: getToolbarButtons(state),
         _visible: isToolboxVisible(state),
-        _visibleButtons: getToolbarButtons(state)
+        _visibleButtons: getToolbarButtons(state),
+        _reactionsEnabled: enableReactions
     };
 }
 
