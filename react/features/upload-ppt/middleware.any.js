@@ -17,7 +17,7 @@ import { AlertDialog } from '../base/dialog/components'
  * @param {Store} store - The redux store.
  * @returns {Function}
  */
-MiddlewareRegistry.register(store => next => async action => {
+MiddlewareRegistry.register(store => next => action => {
     const { dispatch, getState } = store;
     const state = getState();
     const conference = getCurrentConference(state)
@@ -103,13 +103,6 @@ MiddlewareRegistry.register(store => next => async action => {
                     })
                 }
             }
-            break;
-
-        case PARTICIPANT_LEFT:
-            batch(()=>{
-                dispatch(participantLeft(localParticipantId, conference, false));
-                dispatch(resetUploadPPTStatus())
-            })
             break;
         }
 

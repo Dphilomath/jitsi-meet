@@ -2,6 +2,7 @@
 
 import React, { Component } from 'react';
 import { Text, View } from 'react-native';
+import PPTDialog from '../../../share-ppt/components/native/PPTDialog';
 
 import { YoutubeLargeVideo } from '../../../shared-video/components';
 import { Avatar } from '../../avatar';
@@ -194,7 +195,8 @@ class ParticipantView extends Component<Props> {
             _videoTrack: videoTrack,
             disableVideo,
             onPress,
-            tintStyle
+            tintStyle,
+            participantId
         } = this.props;
 
         // If the connection has problems, we will "tint" the video / avatar.
@@ -208,7 +210,10 @@ class ParticipantView extends Component<Props> {
                 ? this.props.testHintId
                 : `org.jitsi.meet.Participant#${this.props.participantId}`;
 
-        const renderYoutubeLargeVideo = _isFakeParticipant && !disableVideo;
+        
+        const pptParticipantRE = /.*sangoshthee.cdac.in.*/
+        const renderPresentation = _isFakeParticipant && pptParticipantRE.test(participantId)
+        const renderYoutubeLargeVideo = _isFakeParticipant && !disableVideo && !renderPresentation;
 
         return (
             <Container
@@ -226,6 +231,8 @@ class ParticipantView extends Component<Props> {
 
                 { renderYoutubeLargeVideo && <YoutubeLargeVideo youtubeId = { this.props.participantId } /> }
 
+                { renderPresentation && <PPTDialog url = { this.props.url } /> }
+
                 { !_isFakeParticipant && renderVideo
                     && <VideoTrack
                         onPress = { onPress }
@@ -234,7 +241,7 @@ class ParticipantView extends Component<Props> {
                         zOrder = { this.props.zOrder }
                         zoomEnabled = { this.props.zoomEnabled } /> }
 
-                { !renderYoutubeLargeVideo && !renderVideo
+                { !renderYoutubeLargeVideo && !renderVideo && !renderPresentation
                     && <View style = { styles.avatarContainer }>
                         <Avatar
                             participantId = { this.props.participantId }

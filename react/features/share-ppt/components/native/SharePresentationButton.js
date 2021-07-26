@@ -9,6 +9,7 @@ import { getLocalParticipant } from '../../../base/participants';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 import { toggleSharedPresentation } from '../../actions.native';
 import { getFeatureFlag, UPLOAD_PPT_ENABLED } from '../../../base/flags';
+import { isSharingStatus } from '../../../shared-video/functions';
 
 
 /**
@@ -102,14 +103,14 @@ class SharePresentationButton extends AbstractButton<Props, *> {
  * @returns {Props}
  */
  function _mapStateToProps(state, ownProps): Object {
-    const { ownerId, status: sharedPPTStatus } = state['features/shared-ppt'];
+    const { ownerId, status } = state['features/shared-ppt'];
     const localParticipantId = getLocalParticipant(state).id;
     const enabled = getFeatureFlag(state, UPLOAD_PPT_ENABLED, true);
     const { visible = enabled } = ownProps;
 
     if (ownerId !== localParticipantId) {
         return {
-            _isDisabled: sharedPPTStatus,
+            _isDisabled: isSharingStatus(status),
             _sharingPPT: false,
             visible
         };
@@ -117,7 +118,7 @@ class SharePresentationButton extends AbstractButton<Props, *> {
 
     return {
         _isDisabled: false,
-        _sharingPPT: sharedPPTStatus,
+        _sharingPPT: isSharingStatus(status),
         visible
     };
 }

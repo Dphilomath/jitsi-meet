@@ -5,7 +5,9 @@ import { getParticipants } from '../base/participants';
 import { PPT_PARTICIPANT_NAME } from './constants';
 
 
-
+export function isSharingStatus(status: String) {
+    return status === 'start'
+}
 
 /**
  * Returns true if there is a PPT is being shared in the meeting.

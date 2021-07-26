@@ -19,7 +19,7 @@ export const SET_UPLOAD_PPT_STATUS = 'SET_UPLOAD_PPT_STATUS';
  *     type: RESET_SHARED_PPT_STATUS,
  * }
  */
-export const RESET_UPLOAD_PPT_STATUS = 'RESET_SHARED_PPT_STATUS';
+export const RESET_UPLOAD_PPT_STATUS = 'RESET_UPLOAD_PPT_STATUS';
 
 /**
  * The type of the action which signals to disable or enable the shared PPT

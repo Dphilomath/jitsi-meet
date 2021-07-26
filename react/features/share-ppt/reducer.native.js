@@ -10,7 +10,7 @@ const initialState = {};
  * Reduces the Redux actions of the feature features/shared-ppt.
  */
 ReducerRegistry.register('features/shared-ppt', (state = initialState, action) => {
-    const { status, time, ownerId } = action;
+    const { status, url, ownerId } = action;
 
     switch (action.type) {
     case RESET_SHARED_PPT_STATUS:
@@ -20,7 +20,7 @@ ReducerRegistry.register('features/shared-ppt', (state = initialState, action) =
             ...state,
             ownerId,
             status,
-            time
+            url
         };
     default:
         return state;

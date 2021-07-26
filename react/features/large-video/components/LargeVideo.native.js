@@ -134,7 +134,8 @@ class LargeVideo extends PureComponent<Props, State> {
                 testHintId = 'org.jitsi.meet.LargeVideo'
                 useConnectivityInfoLabel = { useConnectivityInfoLabel }
                 zOrder = { 0 }
-                zoomEnabled = { true } />
+                zoomEnabled = { true }
+                url = {this.props.url} />
         );
     }
 }
@@ -150,6 +151,7 @@ function _mapStateToProps(state) {
     const { participantId } = state['features/large-video'];
     const participant = getParticipantById(state, participantId);
     const { clientHeight: height, clientWidth: width } = state['features/base/responsive-ui'];
+    const { url: stateUrl } = state['features/shared-ppt']
     let disableVideo = false;
 
     if (participant?.local) {
@@ -161,7 +163,8 @@ function _mapStateToProps(state) {
         _height: height,
         _participantId: participantId,
         _styles: ColorSchemeRegistry.get(state, 'LargeVideo'),
-        _width: width
+        _width: width,
+        url: stateUrl
     };
 }
 

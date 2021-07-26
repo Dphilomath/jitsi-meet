@@ -14,6 +14,6 @@ import '../mobile/wake-lock/middleware';
 import '../mobile/watchos/middleware';
 import '../share-room/middleware';
 import '../shared-video/middleware';
+import '../share-ppt/middleware'
 import '../upload-ppt/middleware'
-
 import './middlewares.any';

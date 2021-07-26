@@ -51,17 +51,6 @@ class UploadPresentationButton extends AbstractButton<Props, *> {
         this._doToggleUploadPresentation()
     }
 
-
-        /**
-     * Indicates whether this button is in toggled state or not.
-     *
-     * @override
-     * @protected
-     * @returns {boolean}
-     */
-    _isToggled() {
-         return this.props._sharingPPT;
-    }
     
 
     /**
@@ -98,19 +87,20 @@ class UploadPresentationButton extends AbstractButton<Props, *> {
  */
  function _mapStateToProps(state, ownProps): Object {
     const { ownerId, status } = state['features/upload-ppt'];
+    const { status: sharedPPTStatus } = state['features/shared-ppt'];
     const localParticipantId = getLocalParticipant(state).id;
     const enabled = getFeatureFlag(state, UPLOAD_PPT_ENABLED, true);
     const { visible = enabled } = ownProps;
 
     if (ownerId !== localParticipantId) {
         return {
-            _isDisabled: false,
+            _isDisabled: sharedPPTStatus==='start',
             visible
         };
     }
 
     return {
-        _isDisabled: false,
+        _isDisabled: sharedPPTStatus==='start',
         visible
     };
 }

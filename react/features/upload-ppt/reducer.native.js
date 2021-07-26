@@ -2,7 +2,7 @@
 
 import { ReducerRegistry } from '../base/redux';
 
-import { SET_UPLOAD_PPT_STATUS, RESET_UPLOAD_PPT_STATUS, RETRY_UPLOAD, SET_UPLOADING} from './actionTypes';
+import { SET_UPLOAD_PPT_STATUS, RESET_UPLOAD_PPT_STATUS, SET_UPLOADING} from './actionTypes';
 
 const initialState = {};
 

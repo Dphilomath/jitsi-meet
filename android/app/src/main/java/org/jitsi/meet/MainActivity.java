@@ -233,12 +233,12 @@ public class MainActivity extends JitsiMeetActivity {
         }
     }
 
-    protected List<ReactPackage> getPackages() {
-        return Arrays.<ReactPackage>asList(
-            new MainReactPackage(),
-            new FilePickerPackage() // Add package
-        );
-    }
+    // protected List<ReactPackage> getPackages() {
+    //     return Arrays.<ReactPackage>asList(
+    //         new MainReactPackage(),
+    //         new FilePickerPackage() // Add package
+    //     );
+    // }
 
     // Helper methods
     //

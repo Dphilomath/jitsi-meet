@@ -18,7 +18,7 @@ import {
     setSharedPPTStatus
 } from './actions.any';
 import { SHARED_PPT, PPT_PARTICIPANT_NAME } from './constants';
-import { isSharingStatus } from './functions';
+
 
 /**
  * Middleware that captures actions related to video sharing and updates
@@ -32,8 +32,8 @@ MiddlewareRegistry.register(store => next => action => {
     const state = getState();
     const conference = getCurrentConference(state);
     const localParticipantId = getLocalParticipant(state)?.id;
-    const { videoUrl, status, ownerId, time, muted, volume } = action;
-    const { ownerId: stateOwnerId } = state['features/shared-video'];
+    const { url, status, ownerId } = action;
+    const { ownerId: stateOwnerId, url: stateUrl} = state['features/shared-ppt'];
 
     switch (action.type) {
     case CONFERENCE_LEFT:
@@ -49,27 +49,21 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     case SET_SHARED_PPT_STATUS:
         if (localParticipantId === ownerId) {
-            sendShareVideoCommand({
+            sendSharePPTCommand({
                 conference,
                 localParticipantId,
-                muted,
                 status,
-                time,
-                id: videoUrl,
-                volume
+                id: url
             });
         }
         break;
     case RESET_SHARED_PPT_STATUS:
         if (localParticipantId === stateOwnerId) {
-            sendShareVideoCommand({
+            sendSharePPTCommand({
                 conference,
-                id: statevideoUrl,
                 localParticipantId,
-                muted: true,
                 status: 'stop',
-                time: 0,
-                volume: 0
+                id: stateUrl
             });
         }
         break;
@@ -87,7 +81,7 @@ StateListenerRegistry.register(
     state => getCurrentConference(state),
     (conference, store, previousConference) => {
         if (conference && conference !== previousConference) {
-            conference.addCommandListener(SHARED_VIDEO,
+            conference.addCommandListener(SHARED_PPT,
                 ({ value, attributes }) => {
 
                     const { dispatch, getState } = store;
@@ -95,12 +89,14 @@ StateListenerRegistry.register(
                     const localParticipantId = getLocalParticipant(getState()).id;
                     const status = attributes.state;
 
-                    if (isSharingStatus(status)) {
-                        handleSharingVideoStatus(store, value, attributes, conference);
+                    if (status ===  'start') {
+                        console.log("start "+value)
+                        handleSharingPPTStatus(store, value, attributes, conference);
                     } else if (status === 'stop') {
+                        console.log("stop "+value)
                         dispatch(participantLeft(value, conference));
                         if (localParticipantId !== from) {
-                            dispatch(resetSharedVideoStatus());
+                            dispatch(resetSharedPPTStatus());
                         }
                     }
                 }
@@ -115,38 +111,35 @@ StateListenerRegistry.register(
  * Sets the SharedVideoStatus if the event was triggered by the local user.
  *
  * @param {Store} store - The redux store.
- * @param {string} videoUrl - The id of the video to the shared.
- * @param {Object} attributes - The attributes received from the share video command.
+ * @param {string} url - The id of the ppt to the shared.
+ * @param {Object} attributes - The attributes received from the share ppt command.
  * @param {JitsiConference} conference - The current conference.
  * @returns {void}
  */
-function handleSharingVideoStatus(store, videoUrl, { state, time, from, muted }, conference) {
+function handleSharingPPTStatus(store, url, { state, from }, conference) {
     const { dispatch, getState } = store;
     const localParticipantId = getLocalParticipant(getState()).id;
-    const oldStatus = getState()['features/shared-video']?.status;
-
-    if (state === 'start' || ![ 'playing', 'pause', 'start' ].includes(oldStatus)) {
-        const youtubeId = videoUrl.match(/http/) ? false : videoUrl;
-        const avatarURL = youtubeId ? `https://img.youtube.com/vi/${youtubeId}/0.jpg` : '';
+    const oldStatus = getState()['features/shared-ppt']?.status;
+    console.log("reached handleSharing")
+    if (state === 'start' ) {
+        const avatarURL = null
 
         dispatch(participantJoined({
             conference,
-            id: videoUrl,
+            id: url,
             isFakeParticipant: true,
-            avatarURL,
-            name: VIDEO_PLAYER_PARTICIPANT_NAME
+            // avatarURL,
+            name: PPT_PARTICIPANT_NAME
         }));
 
-        dispatch(pinParticipant(videoUrl));
+        dispatch(pinParticipant(url));
     }
 
     if (localParticipantId !== from) {
-        dispatch(setSharedVideoStatus({
-            muted: muted === 'true',
+        dispatch(setSharedPPTStatus({
             ownerId: from,
             status: state,
-            time: Number(time),
-            videoUrl
+            url
         }));
     }
 }
@@ -154,24 +147,22 @@ function handleSharingVideoStatus(store, videoUrl, { state, time, from, muted },
 /* eslint-disable max-params */
 
 /**
- * Sends SHARED_VIDEO command.
+ * Sends SHARED_PPT command.
  *
  * @param {string} id - The id of the video.
- * @param {string} status - The status of the shared video.
+ * @param {string} status - The status of the shared ppt.
  * @param {JitsiConference} conference - The current conference.
  * @param {string} localParticipantId - The id of the local participant.
- * @param {string} time - The seek position of the video.
  * @returns {void}
  */
-function sendShareVideoCommand({ id, status, conference, localParticipantId, time, muted, volume }) {
-    conference.sendCommandOnce(SHARED_VIDEO, {
+function sendSharePPTCommand({ id, status, conference, localParticipantId }) {
+    console.log("inside sendSharedPPTcommand", status)
+    
+    conference.sendCommandOnce(SHARED_PPT, {
         value: id,
         attributes: {
             from: localParticipantId,
-            muted,
-            state: status,
-            time,
-            volume
+            state: status
         }
     });
 }
