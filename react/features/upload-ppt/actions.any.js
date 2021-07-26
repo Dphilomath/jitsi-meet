@@ -3,7 +3,7 @@ import { openDialog } from '../base/dialog/actions';
 import { getLocalParticipant } from '../base/participants';
 import { UploadPPTDialog } from './components';
 
-import { RESET_UPLOAD_PPT_STATUS, SET_UPLOAD_PPT_STATUS, RETRY_UPLOAD, TRY_UPLOAD } from './actionTypes';
+import { RESET_UPLOAD_PPT_STATUS, TRY_UPLOAD } from './actionTypes';
 
 /**
  * Resets the status of the upload PPT.
@@ -19,7 +19,7 @@ export function resetUploadPPTStatus() {
 }
 
 
-export function setUploadPPTStatus(file) {
+export function tryPPTUpload(file) {
     return (dispatch, getState) => {
     
         const conference = getCurrentConference(getState());
@@ -53,6 +53,6 @@ export function toggleUploadPresentation() {
     return (dispatch, getState) => {
         const state = getState();
         const { status } = state['features/upload-ppt'];
-            dispatch(showUploadPPTDialog( file => dispatch(setUploadPPTStatus(file))));
+            dispatch(showUploadPPTDialog( file => dispatch(tryPPTUpload(file))));
     };
 }

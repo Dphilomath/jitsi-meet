@@ -18,3 +18,16 @@ export function isVideoPlaying(stateful: Object | Function): boolean {
         && (p.name === PPT_PARTICIPANT_NAME))
     );
 }
+
+export  async function uploadPPT(requestOptions){
+
+    const response = await fetch("https://sangoshthee.cdac.in/FileUploadService", requestOptions)
+
+    if(!response.ok){
+        const message = `An error has occured: ${response.status}`;
+        throw new Error(message);
+    }
+
+    const result = await response.json()
+    return result
+}

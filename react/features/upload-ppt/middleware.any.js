@@ -2,13 +2,12 @@
 
 import { CONFERENCE_LEFT, getCurrentConference, getRoomName} from '../base/conference';
 import { getLocalParticipant, PARTICIPANT_LEFT, participantLeft } from '../base/participants';
-import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
-
+import { MiddlewareRegistry } from '../base/redux';
 import { SET_UPLOAD_PPT_STATUS, SET_UPLOADING, TRY_UPLOAD } from './actionTypes';
-import { resetUploadPPTStatus, retryUpload, setUploadPPTStatus } from './actions.any';
-import { batch } from 'react-redux';
+import { resetUploadPPTStatus } from './actions.any';
 import { openDialog } from '../base/dialog/actions';
 import { AlertDialog } from '../base/dialog/components'
+import { uploadPPT } from './functions'
 
 
 /**
@@ -17,7 +16,7 @@ import { AlertDialog } from '../base/dialog/components'
  * @param {Store} store - The redux store.
  * @returns {Function}
  */
-MiddlewareRegistry.register(store => next => async action => {
+MiddlewareRegistry.register(store => next => action => {
     const { dispatch, getState } = store;
     const state = getState();
     const conference = getCurrentConference(state)
@@ -33,7 +32,6 @@ MiddlewareRegistry.register(store => next => async action => {
 
         case TRY_UPLOAD:
             if (localParticipantId === ownerId) {
-                try{
                     const formdata = new FormData();
                     formdata.append("sampleFile", { name: file.fileName, uri: file.uri, type: file.type });
                     formdata.append("username", room)
@@ -45,57 +43,48 @@ MiddlewareRegistry.register(store => next => async action => {
                     };
 
                     dispatch({ 
-                                type: SET_UPLOADING,
-                                loading: true 
-                            })
-                  
-
-                    fetch("https://sangoshthee.cdac.in/FileUploadService", requestOptions)
-                        .then(response => response.text())
-                        .then(result =>  { 
-                            console.log(result)
-                            if(result.status === "1"){
-                                dispatch({
-                                    type: SET_UPLOAD_PPT_STATUS,
-                                    file,
-                                    status: result.status,
-                                    ownerId
-                                })
-                            }
-                            dispatch(openDialog(AlertDialog, {
-                                contentKey:{
-                                    key: result.message
-                                }
-                            }))
-                        })
-                        .catch(error => {
-                            console.log('error', error)
-                            dispatch(openDialog(AlertDialog, {
-                                contentKey:error
-                            }))
-                        }); 
-                        dispatch({ 
-                            type: SET_UPLOADING,
-                            loading:false 
-                        })
-                } catch(err){
-                    console.log(err)
-                    dispatch({ 
                         type: SET_UPLOADING,
-                        loading: false 
+                        loading: true 
                     })
-                }
+
+                    uploadPPT(requestOptions)
+                    .then(result => {
+                        dispatch({
+                            type: SET_UPLOADING,
+                            loading: false
+                        })
+                        if(result.status==="1"){
+                            dispatch({
+                                type: SET_UPLOAD_PPT_STATUS,
+                                file,
+                                status: true,
+                                ownerId
+                            })
+                        }else {
+                            dispatch(resetUploadPPTStatus)
+                        }
+                        dispatch(openDialog(AlertDialog, {
+                            contentKey: {
+                                key: result.msg
+                            }
+                        }))
+                    })
+                    .catch(err =>{
+                        dispatch({
+                            type: SET_UPLOADING,
+                            loading: false
+                        })
+                        dispatch(openDialog(AlertDialog, {
+                            contentKey: {
+                                key: err
+                            }
+                        }))
+                        console.log(err)
+                    })
+ 
+                    } 
+                break;
             }
-            break;
-
-        case PARTICIPANT_LEFT:
-            batch(()=>{
-                dispatch(participantLeft(localParticipantId, conference, false));
-                dispatch(resetUploadPPTStatus())
-            })
-            break;
+            return next(action);
         }
-
-    return next(action);
-});
-
+)
