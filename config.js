@@ -70,6 +70,9 @@ var config = {
         // callStatsThreshold: 5 // enable callstats for 5% of the users.
     },
 
+    // Enables reactions feature.
+    enableReactions: false,
+
     // Disables ICE/UDP by filtering out local and remote UDP candidates in
     // signalling.
     // webrtcIceUdpDisable: false,
@@ -460,7 +463,7 @@ var config = {
     // - if `toolbarButtons` is undefined, we fallback to enabling all buttons on the UI
     // toolbarButtons: [
     //    'microphone', 'camera', 'closedcaptions', 'desktop', 'embedmeeting', 'fullscreen',
-    //    'fodeviceselection', 'hangup', 'profile', 'chat', 'recording',
+    //    'fodeviceselection', 'hangup', 'profile', 'participants-pane', 'chat', 'recording',
     //    'livestreaming', 'etherpad', 'sharedvideo', 'shareaudio', 'settings', 'raisehand',
     //    'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
     //    'tileview', 'select-background', 'download', 'help', 'mute-everyone', 'mute-video-everyone', 'security'
@@ -603,6 +606,9 @@ var config = {
     // conference (if set to true, these sounds will not be played).
     // disableJoinLeaveSounds: false,
 
+    // Disables the sounds that play when a chat message is received.
+    // disableIncomingMessageSound: false,
+
     // Information for the chrome extension banner
     // chromeExtensionBanner: {
     //     // The chrome extension to be installed address
@@ -731,6 +737,9 @@ var config = {
 
     // Hides the conference subject
     // hideConferenceSubject: true,
+
+    // Hides the recording label
+    // hideRecordingLabel: false,
 
     // Hides the conference timer.
     // hideConferenceTimer: true,
