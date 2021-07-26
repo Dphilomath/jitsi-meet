@@ -9,7 +9,7 @@ import { RESET_SHARED_PPT_STATUS, SET_SHARED_PPT_STATUS } from './actionTypes';
  * Resets the status of the shared PPT.
  *
  * @returns {{
- *     type: SET_SHARED_PPT_STATUS,
+ *     type: RESET_SHARED_PPT_STATUS,
  * }}
  */
 export function resetSharedPPTStatus() {
@@ -33,6 +33,7 @@ export function resetSharedPPTStatus() {
  * }}
  */
  export function setSharedPPTStatus({ url, status, ownerId }) {
+    console.log("setShared fxn run")
     return {
         type: SET_SHARED_PPT_STATUS,
         ownerId,

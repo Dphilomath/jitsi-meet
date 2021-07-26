@@ -98,18 +98,16 @@ class PPTDialog extends React.Component {
     }
 
     render(){
-        console.log(this.props.url)
+        console.log("PPTDialog.js:101 "+this.props.url)
         return(
-                    // <Modal animationType="slide" transparent={true}  visible={this.state.showModal} onRequestClose={() => this.setState({showModal: false}) }>
-                        <View style={styles.modal}>
-                            <View style={styles.modalContainer}>
-                                <WebView 
-                                    style={{ flex : 1 }} 
-                                    source={{uri: this.props.url}}
-                                    renderLoading={this.ActivityIndicatorLoadingView}/>
-                            </View>
-                        </View>
-                    // </Modal>
+                <View style={styles.modal}>
+                    <View style={styles.modalContainer}>
+                        <WebView 
+                            style={{ flex : 1 }} 
+                            source={{uri: this.props.url}}
+                            renderLoading={this.ActivityIndicatorLoadingView}/>
+                    </View>
+                </View>
         )
     }
 }

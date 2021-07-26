@@ -90,10 +90,10 @@ StateListenerRegistry.register(
                     const status = attributes.state;
 
                     if (status ===  'start') {
-                        console.log(value)
+                        console.log("start "+value)
                         handleSharingPPTStatus(store, value, attributes, conference);
                     } else if (status === 'stop') {
-                        console.log(value)
+                        console.log("stop "+value)
                         dispatch(participantLeft(value, conference));
                         if (localParticipantId !== from) {
                             dispatch(resetSharedPPTStatus());
@@ -156,7 +156,7 @@ function handleSharingPPTStatus(store, url, { state, from }, conference) {
  * @returns {void}
  */
 function sendSharePPTCommand({ id, status, conference, localParticipantId }) {
-    console.log("inside sendSharedPPTcommand")
+    console.log("inside sendSharedPPTcommand", status)
     
     conference.sendCommandOnce(SHARED_PPT, {
         value: id,

@@ -8,6 +8,6 @@ import '../mobile/full-screen/reducer';
 import '../mobile/incoming-call/reducer';
 import '../mobile/watchos/reducer';
 import '../shared-video/reducer';
-import '../presentation/reducer'
 import '../share-ppt/reducer';
+import '../upload-ppt/reducer'
 import './reducers.any';
