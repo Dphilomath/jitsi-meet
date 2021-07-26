@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 
 import { CustomSubmitDialog} from '../../../base/dialog';
 import { connect } from '../../../base/redux';
@@ -59,7 +59,7 @@ class UploadPPTDialog extends AbstractUploadPPTDialog<*> {
 
     _invalidFile = () =>{
       if(Object.keys(this.state.file).length === 0) return null
-      return this._validated() ? null:<Text style = { styles.invalidFile }>please select a ppt or pptx file</Text>
+      return this._validated() ? null:<Text style = { styles.invalidFile }>Please select a .ppt or .pptx file</Text>
     }
  
 
@@ -71,13 +71,13 @@ class UploadPPTDialog extends AbstractUploadPPTDialog<*> {
     render() {
         return (
             <CustomSubmitDialog
-                okDisabled={ !this._validated() }
+                okDisabled={ !this._validated() || this.props.uploading }
                 okKey="Submit"
                 onCancel = { this._onCancel }
                 onSubmit = { this._toggleUploadPPT.bind(this) }>
                   
                 <View style= { styles.container }>
-                  <Text style= { styles.title }>Upload a presentation</Text>
+                  <Text style= { styles.title }>Upload a Presentation</Text>
                   <View style={ styles.upload } >
                     <Text style={ styles.fileInfo }>{ this.getFilename() }</Text>
                     <TouchableOpacity style = { styles.button } onPress={this.selectFileTapped.bind(this)}>
@@ -86,6 +86,7 @@ class UploadPPTDialog extends AbstractUploadPPTDialog<*> {
                   </View>   
                   {this._invalidFile()}
                 </View>  
+                <ActivityIndicator animating = {this.props.uploading} size="large" />
             </CustomSubmitDialog>
         );
     }
@@ -114,10 +115,10 @@ class UploadPPTDialog extends AbstractUploadPPTDialog<*> {
  * @returns {Props}
  */
 function _mapStateToProps(state, ownProps): Object {
-  const { failed = false, loading = false} = state['features/upload-ppt'];
+  const { loading = false}  = state['features/upload-ppt'];
+  console.log(loading)
 
   return {
-     uploadFailed: failed,
      uploading: loading
   };
 }

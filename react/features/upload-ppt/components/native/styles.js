@@ -26,11 +26,13 @@ const styles = StyleSheet.create({
     },
     title:{
       fontWeight:"bold",
-      fontSize:17,
-      paddingBottom:10
+      fontSize:20,
+      paddingBottom:30
     },
     invalidFile: {
-      color:"red"
+      color:"red",
+      fontSize:14,
+      padding:10
     }
   });
 
