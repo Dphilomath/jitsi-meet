@@ -4,7 +4,9 @@ import React from 'react';
 import { View, Text, PixelRatio, StyleSheet, TouchableOpacity } from 'react-native';
 
 import { ConfirmDialog} from '../../../base/dialog';
+import { setActiveModalId } from '../../../base/modal';
 import { connect } from '../../../base/redux';
+import { SHARE_PPT_ID } from '../../constants';
 
 import AbstractSharedPPTDialog from '../AbstractSharedPPTDialog';
 
@@ -41,7 +43,7 @@ class SharedPPTDialog extends AbstractSharedPPTDialog<*> {
         _onConfirmSharePPT() {
             const { onPostSubmit } = this.props;
             onPostSubmit && onPostSubmit();
-            
+            this.props.dispatch(setActiveModalId(SHARE_PPT_ID));
             return true;
         }
 }

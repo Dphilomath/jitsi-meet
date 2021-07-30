@@ -16,3 +16,5 @@ export const PPT_PARTICIPANT_NAME = 'PPT';
  * @type {string}
  */
 export const SHARED_PPT = 'shared-ppt';
+
+export const SHARE_PPT_ID = 'SHARE_PPT_ID'
